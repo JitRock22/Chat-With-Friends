@@ -1,12 +1,15 @@
 
 import './App.css'
+import Form1 from './modules/Form/Form1'
 
 function App() {
 
 
   return (
     <>
-      <div className="bg-red-300">Hello Guys</div>
+      <div className=" h-screen flex justify-center items-center">
+        <Form1 />
+      </div>
     </>
   )
 }
