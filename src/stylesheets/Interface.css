@@ -1,0 +1,122 @@
+.top {
+  overflow: scroll;
+}
+
+.topper {
+  position: static;
+  top: 0;
+}
+.message {
+  margin: 15px 10px;
+}
+.header {
+  padding: 10px;
+  overflow: auto;
+}
+
+.header-child {
+  padding: 10px 2px;
+  margin: 15px 5px;
+}
+/* @media(max-width:780px){
+    img{
+        width: 50px;
+        height: 50px;
+    }
+    h3{
+        font-size:20px ;
+    }
+    p{
+        font-size: 10px;
+    }
+}
+@media(max-width:700px){
+    img{
+        width: 40px;
+        height: 40px;
+    }
+    h3{
+        font-size:15px ;
+    }
+    p{
+        font-size: 8px;
+    }
+}
+@media(max-width:600px){
+    img{
+        width: 30px;
+        height: 30px;
+    }
+    h3{
+        font-size:10px ;
+    }
+    p{
+        font-size: 6px;
+    }
+} */
+/* For scrollbar design  */
+::-webkit-scrollbar {
+  width: 5px;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+  background: #8888884f;
+  border-radius: 10px;
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+  background: #555555b4;
+}
+/*Chat Section*/
+.chat {
+  margin: 20px 15px;
+}
+.chat-body{
+    background-size: cover;
+}
+.chat-img {
+  margin-left: 20px;
+}
+.chat-head {
+  margin-right: auto;
+}
+.material-symbols-outlined {
+  padding: 30px;
+  cursor: pointer;
+}
+.person-chat{
+    padding: 20px;
+}
+.sender{
+    padding:10px 10px;
+    font-size: 12px;
+    margin: 20px;
+}
+.receiver{
+    margin: 20px 5px;
+    padding:10px 10px;
+    margin-left: auto;
+    font-size: 12px;
+}
+.chat-input{
+    width:80%;
+    margin: 20px 10px;
+}
+.send{
+    padding: 10px;
+    margin: 5px;
+    color: rgb(255, 255, 255);
+    background-color: green;
+    border-radius: 50%;
+}
+.circle{
+    background-color: #3FC2F7;
+    color: black;
+}
