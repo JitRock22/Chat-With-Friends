@@ -4,9 +4,9 @@ import Interface from './modules/Dashboard/Interface'
 import Form1 from './modules/Form/Form1'
 import { createBrowserRouter, RouterProvider, Navigate } from 'react-router-dom'
 
-const ProtectedRoute = ({ children }) => {
-  const isLoggedIn = localStorage.getItem('user:token') !== null || true;
-  if (!isLoggedIn) {
+const ProtectedRoute = ({ children, auth = false }) => {
+  const isLoggedIn = localStorage.getItem('user:token') !== null || false;
+  if (!isLoggedIn && auth) {
     return <Navigate to={"/user/signin"} />
   } else if (isLoggedIn && ['/user/signin', 'user/signup'].includes(window.location.pathname)) {
     return <Navigate to={'/'} />
@@ -18,7 +18,7 @@ const Router = createBrowserRouter([
   {
     path: "/",
     element:
-      <ProtectedRoute><Interface /></ProtectedRoute>
+      <ProtectedRoute auth={true}><Interface /></ProtectedRoute>
   }, {
     path: "/user/signin",
     element: <ProtectedRoute><Form1 isSignin={true} /></ProtectedRoute>
