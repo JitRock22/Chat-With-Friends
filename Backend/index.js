@@ -120,7 +120,7 @@ app.post('/api/message', async (req, res) => {
             await newconversation.save();
             const newMessage = new Messages({ conversationId: newconversation._id, senderId, message })
             await newMessage.save();
-            res.status(200).send("message sent re baba successfully");
+            res.status(200).send("message sent successfully");
         } else if (!conversationId && !receiverId) {
             return res.status(400).send("Please fill all fields")
         }
