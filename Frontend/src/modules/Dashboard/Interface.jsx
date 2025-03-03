@@ -5,7 +5,6 @@ import men from '../../assets/cropped_image (1).png'
 import Contacts from '../../components/Contacts';
 import { useNavigate } from 'react-router-dom';
 const Interface = () => {
-
     useEffect(() => {
         const userDetail = localStorage.getItem('user:detail');
         console.log("User detail is-->", userDetail);
@@ -31,6 +30,22 @@ const Interface = () => {
         }
     }, []);
 
+    const [users, setUsers] = useState([])
+    useEffect(() => {
+        const fetchUsers = async () => {
+            const res = await fetch(`http://localhost:3000/api/users/${user?.id}`, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                }
+            });
+            const resData = await res.json()
+            setUsers(resData)
+
+        }
+        fetchUsers()
+    }, []);
+
     const contactsArray = Object.values(Contacts); // This is the key change
     const [user, setUser] = useState(JSON.parse(localStorage.getItem('user:detail')))
     const [conversation, setConversation] = useState({ conversationUserData: [] })
@@ -42,8 +57,8 @@ const Interface = () => {
     // console.log("this is:", conversation.conversationUserData);
     const [messages, setMessages] = useState([]);
     const [message, setMessage] = useState();
-    const fetchMessage = async (conversationId, user) => {
-        const res = await fetch(`http://localhost:3000/api/messages/${conversationId}`, {
+    const fetchMessage = async (conversationId, receiver) => {
+        const res = await fetch(`http://localhost:3000/api/messages/${conversationId}?senderId=${user?.id}&&receiverId=${receiver?.receiverId}`, {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
@@ -51,26 +66,29 @@ const Interface = () => {
         });
         const resData = await res.json()
         console.log('Response Data >>', resData);
-        setMessages({ messages: resData, receiver: user, conversationId });
+        setMessages({ messages: resData, receiver, conversationId });
         console.log("Messages>>", messages);
     }
     const sendMessage = async (e) => {
+        console.log("message>>>>>", message, messages?.conversationId, user?.id, messages?.receiver?.receiverId);
         const res = await fetch(`http://localhost:3000/api/message`, {
             method: 'POST',
             headers: {
-                'Content-Type': 'application/json'},
-                body: JSON.stringify({
-                    conversationId: messages?.conversationId,
-                    senderId: user?.id,
-                    message,
-                    receiverId: messages?.receiver?.receiverId
-                })
-            
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                conversationId: messages?.conversationId,
+                senderId: user?.id,
+                message,
+                receiverId: messages?.receiver?.receiverId
+            })
+
         })
         const resData = await res.json();
         console.log('new Data >>', resData);
         sendMessage('')
     }
+    console.log("users are:>>>>>>>", users)
     return (
         <div className=" w-screen flex ">
             <div className="header w-[25%] bg-blue-100 border-black h-screen cursor-pointer">
@@ -151,7 +169,7 @@ const Interface = () => {
                     <div className=" w-[100%] flex justify-center items-center">
 
                         <input type="text" className="chat-input rounded-full" placeholder='type a message...' onChange={(e) => setMessage(e.target.value)} />
-                        <span className={`material-symbols-outlined send ${!message && 'pointer-events-none'}`} onClick={() => sendMessage()}>
+                        <span className={`material-symbols-outlined send ${!message && 'pointer-events-none'}`} onClick={(e) => sendMessage(e)}>
                             send
                         </span>
                         <span className="material-symbols-outlined send circle">
@@ -165,7 +183,21 @@ const Interface = () => {
 
 
             </div>
-            <div className="w-[25%]  h-screen "></div>
+            <div className="w-[25%]  h-screen ">
+                <div className=" text-center text-2xl font-bold text-blue-400 message">Peoples</div>
+                {users.length > 0 ?
+                    users.map(({ userId, user }, index) => (
+                        <Contacts
+                            key={index}
+                            name={user?.fullname}
+                            status={user?.email}
+                            image={men}
+                            onClick={() => fetchMessage('new', user)}
+                        />
+                    )) :
+                    (<div className=" text-lg mt-24 font-semibold text-center">No conversations is there</div>)
+                }
+            </div>
         </div>
     )
 }
