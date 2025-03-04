@@ -4,9 +4,9 @@ const Promise = require("promise")
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const cors = require('cors');
-const io=require('socket.io')(3000,{
-    cors:{
-        origin:"http://localhost:3002",
+const io = require('socket.io')(3030, {
+    cors: {
+        origin: "http://localhost:5173",
     }
 });
 
@@ -15,6 +15,57 @@ const Users = require('./models/Users')/*Importing user model from UserSchema */
 const Messages = require('./models/Messages');
 const Conversations = require('./models/Conversations');
 
+//socket.io
+let users = [];
+
+io.on('connection', socket => {
+    console.log("User Connected", socket.id);
+
+    socket.on('addUser', async (userId) => {
+        const existingUserIndex = users.findIndex(user => user.userId === userId);
+
+        if (existingUserIndex === -1) {
+            // User does not exist, add them
+            const user = { userId, socketId: socket.id };
+            users.push(user);
+        } else {
+            // User exists, update their socket ID
+            users[existingUserIndex].socketId = socket.id;
+        }
+
+        io.emit('getUsers', users);
+        console.log(users);
+    });
+
+    socket.on('sendMessage', async ({ senderId, receiverId, message, conversationId }) => {
+        const receiver = users.find(user => user.userId === receiverId);
+        const sender = users.find(user => user.userId === senderId);
+        const user = await Users.findById(senderId);
+        if (receiver) {
+            io.to(receiver.socketId).to(sender.socketId).emit('getMessage', {
+                senderId, message, conversationId, receiverId,
+                user: { id: user._id, email: user.email, fullname: user.fullname }
+            });
+        } else {
+            io.to(sender.socketId).emit('getMessage', {
+                senderId, message, conversationId, receiverId,
+                user: { id: user._id, email: user.email, fullname: user.fullname }
+            });
+        }
+    });
+
+
+    socket.on('disconnect', () => {
+        const userIndex = users.findIndex(user => user.socketId === socket.id);
+        if (userIndex !== -1) {
+            users.splice(userIndex, 1);
+            io.emit('getUsers', users);
+            console.log("User disconnected, users:", users);
+        }
+    });
+
+    console.log(users);
+});
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cors());

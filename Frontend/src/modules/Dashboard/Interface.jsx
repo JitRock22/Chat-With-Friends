@@ -1,8 +1,9 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useRef } from 'react'
 import '../../stylesheets/Interface.css'
 import women from '../../assets/cropped_image.png'
 import men from '../../assets/cropped_image (1).png'
 import Contacts from '../../components/Contacts';
+import { io } from 'socket.io-client'
 import { useNavigate } from 'react-router-dom';
 const Interface = () => {
     useEffect(() => {
@@ -49,14 +50,36 @@ const Interface = () => {
     const contactsArray = Object.values(Contacts); // This is the key change
     const [user, setUser] = useState(JSON.parse(localStorage.getItem('user:detail')))
     const [conversation, setConversation] = useState({ conversationUserData: [] })
+    const [socket, setSocket] = useState(null)
     const navigate = useNavigate();
-    // navigate(0);
     const conArray = conversation.conversationUserData;
-    // console.log('user:-->', user);
-    // console.log('conversations:-->', conversation);
-    // console.log("this is:", conversation.conversationUserData);
     const [messages, setMessages] = useState([]);
     const [message, setMessage] = useState();
+    const messageRef = useRef(null);
+    console.log("Messages are:>>>>", messages);
+    //socket.io
+    useEffect(() => {
+        setSocket(io('http://localhost:3030'))
+    }, [])
+
+    useEffect(() => {
+        messageRef.current?.scrollIntoView({ behavior: 'smooth' })
+    }, [messages?.messages])
+
+    useEffect(() => {
+        socket?.emit('addUser', user?.id)
+        socket?.on('getUsers', users => {
+            console.log('activeUsers :>>>', users)
+        })
+        socket?.on('getMessage', data => {
+            console.log('Message Received :>>>', data)
+            setMessages(prev => ({
+                ...prev,
+                messages: [...prev.messages, { user: data.user, message: data.message }]
+            }))
+        })
+    }, [socket])
+
     const fetchMessage = async (conversationId, receiver) => {
         const res = await fetch(`http://localhost:3000/api/messages/${conversationId}?senderId=${user?.id}&&receiverId=${receiver?.receiverId}`, {
             method: 'GET',
@@ -70,6 +93,12 @@ const Interface = () => {
         console.log("Messages>>", messages);
     }
     const sendMessage = async (e) => {
+        socket?.emit('sendMessage', {
+            senderId: user?.id,
+            receiverId: messages?.receiver?.receiverId,
+            message,
+            conversationId: messages?.conversationId
+        })
         console.log("message>>>>>", message, messages?.conversationId, user?.id, messages?.receiver?.receiverId);
         const res = await fetch(`http://localhost:3000/api/message`, {
             method: 'POST',
@@ -86,7 +115,7 @@ const Interface = () => {
         })
         const resData = await res.json();
         console.log('new Data >>', resData);
-        sendMessage('')
+        setMessage('')
     }
     console.log("users are:>>>>>>>", users)
     return (
@@ -149,11 +178,17 @@ const Interface = () => {
                             messages.messages.map(({ message, user: { id } = {} }, index) => {
                                 if (id === user?.id) {
                                     return (
-                                        <div key={index} className=" receiver h-auto  max-w-[40%] bg-sky-400 text-white rounded-b-xl rounded-tl-xl">{message}</div>
+                                        <>
+                                            <div key={index} className=" receiver h-auto  max-w-[40%] bg-sky-400 text-white rounded-b-xl rounded-tl-xl">{message}</div>
+                                            <div  ref={messageRef}></div>
+                                        </>
                                     )
                                 } else {
                                     return (
-                                        <div key={index} className=" sender h-auto max-w-[40%] bg-gray-200 rounded-b-xl rounded-tr-xl">{message}</div>
+                                        <>
+                                            <div key={index} className=" sender h-auto max-w-[40%] bg-gray-200 rounded-b-xl rounded-tr-xl">{message}</div>
+                                            <div ref={messageRef}></div>
+                                        </>
 
                                     )
                                 }
@@ -168,7 +203,7 @@ const Interface = () => {
                     messages?.receiver?.fullname &&
                     <div className=" w-[100%] flex justify-center items-center">
 
-                        <input type="text" className="chat-input rounded-full" placeholder='type a message...' onChange={(e) => setMessage(e.target.value)} />
+                        <input type="text" className="chat-input rounded-full" value={message} placeholder='type a message...' onChange={(e) => setMessage(e.target.value)} />
                         <span className={`material-symbols-outlined send ${!message && 'pointer-events-none'}`} onClick={(e) => sendMessage(e)}>
                             send
                         </span>
@@ -183,7 +218,7 @@ const Interface = () => {
 
 
             </div>
-            <div className="w-[25%]  h-screen ">
+            <div className="w-[25%]  h-screen overflow-auto">
                 <div className=" text-center text-2xl font-bold text-blue-400 message">Peoples</div>
                 {users.length > 0 ?
                     users.map(({ userId, user }, index) => (
