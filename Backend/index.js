@@ -73,6 +73,9 @@ app.use(cors());
 app.get('/', (req, res) => {
     res.send("Welcome to our Chat API");
 })
+app.get('/hello', (req, res) => {
+    res.send("Hello Jit");
+})
 app.post('/api/register', async (req, res) => {
     try {
         const { fullname, email, password } = req.body;
