@@ -4,10 +4,11 @@ const Promise = require("promise")
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const cors = require('cors');
-const SOCKET_URL = "https://chat-with-friends-two.vercel.app"
-const io = require('socket.io')(3030, {
+const server = require('http').createServer(app);
+// const SOCKET_URL = "https://chat-with-friends-two.vercel.app"
+const io = require('socket.io')(server, {
     cors: {
-        origin: SOCKET_URL,
+        origin: "https://chat-with-friends-two.vercel.app",
     }
 });
 
@@ -223,6 +224,6 @@ app.get('/api/users/:userId', async (req, res) => {
         console.log('Error', error);
     }
 })
-app.listen(port = 3000, () => {
+server.listen(port, () => {
     console.log("Server Running Successfully at port " + port);
 })
