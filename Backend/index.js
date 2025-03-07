@@ -1,7 +1,7 @@
 const express = require('express');
 const app = express();
 const Promise = require("promise")
-const bcrypt = require('bcrypt');
+const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const cors = require('cors');
 const io = require('socket.io')(3030, {
