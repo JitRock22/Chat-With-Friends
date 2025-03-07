@@ -71,7 +71,7 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cors());
 //Routes
 app.get('/', (req, res) => {
-    res.send("Welcome");
+    res.send("Welcome to our Chat API");
 })
 app.post('/api/register', async (req, res) => {
     try {
