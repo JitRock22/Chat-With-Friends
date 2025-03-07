@@ -59,7 +59,7 @@ const Interface = () => {
     console.log("Messages are:>>>>", messages);
     //socket.io
     useEffect(() => {
-        setSocket(io('http://localhost:3030'))
+        setSocket(io(process.env.VITE_SOCKET_URL))
     }, [])
 
     useEffect(() => {
@@ -180,7 +180,7 @@ const Interface = () => {
                                     return (
                                         <>
                                             <div key={index} className=" receiver h-auto  max-w-[40%] bg-sky-400 text-white rounded-b-xl rounded-tl-xl">{message}</div>
-                                            <div  ref={messageRef}></div>
+                                            <div ref={messageRef}></div>
                                         </>
                                     )
                                 } else {

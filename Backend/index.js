@@ -6,7 +6,7 @@ const jwt = require('jsonwebtoken');
 const cors = require('cors');
 const io = require('socket.io')(3030, {
     cors: {
-        origin: "http://localhost:5173",
+        origin: process.env.SOCKET_URL,
     }
 });
 
