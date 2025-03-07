@@ -6,6 +6,8 @@ import Contacts from '../../components/Contacts';
 import { io } from 'socket.io-client'
 import { useNavigate } from 'react-router-dom';
 const Interface = () => {
+    // const baseUrl = 'http://localhost:3000/api';
+    const baseUrl='https://chat-with-friends-gzc4.onrender.com/api'
     useEffect(() => {
         const userDetail = localStorage.getItem('user:detail');
         console.log("User detail is-->", userDetail);
@@ -14,7 +16,7 @@ const Interface = () => {
             // setUser(loggedInUser); // Set the user state
             console.log("User id:-->", loggedInUser.id)
             const fetchconversation = async () => {
-                const res = await fetch(`http://localhost:3000/api/conversation/${loggedInUser?.id}`, {
+                const res = await fetch(`${baseUrl}/conversation/${loggedInUser?.id}`, {
                     method: 'GET',
                     headers: {
                         'Content-Type': 'application/json',
@@ -34,7 +36,7 @@ const Interface = () => {
     const [users, setUsers] = useState([])
     useEffect(() => {
         const fetchUsers = async () => {
-            const res = await fetch(`http://localhost:3000/api/users/${user?.id}`, {
+            const res = await fetch(`${baseUrl}/users/${user?.id}`, {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',
@@ -58,9 +60,12 @@ const Interface = () => {
     const messageRef = useRef(null);
     console.log("Messages are:>>>>", messages);
     //socket.io
+    // useEffect(() => {
+    //     setSocket(io(process.env.VITE_SOCKET_URL))
+    // }, [])
     useEffect(() => {
-        setSocket(io(process.env.VITE_SOCKET_URL))
-    }, [])
+        setSocket(io(import.meta.env.VITE_SOCKET_URL));
+    }, []);
 
     useEffect(() => {
         messageRef.current?.scrollIntoView({ behavior: 'smooth' })
@@ -81,7 +86,7 @@ const Interface = () => {
     }, [socket])
 
     const fetchMessage = async (conversationId, receiver) => {
-        const res = await fetch(`http://localhost:3000/api/messages/${conversationId}?senderId=${user?.id}&&receiverId=${receiver?.receiverId}`, {
+        const res = await fetch(`${baseUrl}/messages/${conversationId}?senderId=${user?.id}&&receiverId=${receiver?.receiverId}`, {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
@@ -100,7 +105,7 @@ const Interface = () => {
             conversationId: messages?.conversationId
         })
         console.log("message>>>>>", message, messages?.conversationId, user?.id, messages?.receiver?.receiverId);
-        const res = await fetch(`http://localhost:3000/api/message`, {
+        const res = await fetch(`${baseUrl}/message`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
