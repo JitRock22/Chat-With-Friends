@@ -4,9 +4,10 @@ const Promise = require("promise")
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const cors = require('cors');
+const SOCKET_URL = "https://chat-with-friends-two.vercel.app"
 const io = require('socket.io')(3030, {
     cors: {
-        origin: process.env.SOCKET_URL,
+        origin: SOCKET_URL,
     }
 });
 
