@@ -4,6 +4,8 @@ import Button from '../../components/Button'
 import { useNavigate } from 'react-router-dom'
 
 const Form1 = ({ isSignin = false, }) => {
+     // const baseUrl = 'http://localhost:3000/api';
+    const baseUrl='https://chat-with-friends-gzc4.onrender.com/api'
     const [data, setData] = useState({
         ...(isSignin ? {
             email: '',
@@ -22,7 +24,7 @@ const Form1 = ({ isSignin = false, }) => {
     const handleSubmit=async(e)=>{
         console.log("data-->", data);
         e.preventDefault();
-        const res=await fetch(`http://localhost:3000/api/${isSignin ? 'login':'register'}`,{
+        const res=await fetch(`${baseUrl}/${isSignin ? 'login':'register'}`,{
             method:'Post',
             headers:{
                 'content-Type':'application/json'
