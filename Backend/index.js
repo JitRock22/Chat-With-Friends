@@ -5,10 +5,11 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const cors = require('cors');
 const server = require('http').createServer(app);
+const port=8000;
 // const SOCKET_URL = "https://chat-with-friends-two.vercel.app"
 const io = require('socket.io')(server, {
     cors: {
-        origin: "https://chat-with-friends-two.vercel.app",
+        origin: process.env.SOCKET_URL || "http://localhost:3000",
     }
 });
 
