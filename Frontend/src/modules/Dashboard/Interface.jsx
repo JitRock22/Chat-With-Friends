@@ -7,7 +7,7 @@ import { io } from 'socket.io-client'
 import { useNavigate } from 'react-router-dom';
 const Interface = () => {
     // const baseUrl = 'http://localhost:3000/api';
-    const baseUrl='https://chat-with-friends-gzc4.onrender.com/api'
+    const baseUrl = 'https://chat-with-friends-gzc4.onrender.com/api'
     useEffect(() => {
         const userDetail = localStorage.getItem('user:detail');
         console.log("User detail is-->", userDetail);
@@ -64,7 +64,7 @@ const Interface = () => {
     //     setSocket(io(process.env.VITE_SOCKET_URL))
     // }, [])
     useEffect(() => {
-        setSocket(io(import.meta.env.VITE_SOCKET_URL));
+        setSocket(io("https://chat-with-friends-gzc4.onrender.com"));
     }, []);
 
     useEffect(() => {
